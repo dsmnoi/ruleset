@@ -10,10 +10,15 @@
       {
         "tag": "dns_resolver",
         "type": "udp",
-        "server": "77.88.8.8"
+        "server": "223.5.5.5"
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "rule_set": "geosite-cn",
+        "server": "dns_resolver"
+      }
+    ],
     "final": "dns_resolver",
     "strategy": "prefer_ipv4"
   },
@@ -80,17 +85,17 @@
     "auto_detect_interface": false,
     "rule_set": [
       {
-        "tag": "refilter_domains",
+        "tag": "ProxyGFWlist",
         "type": "remote",
         "format": "binary",
-        "url": "https://github.com/1andrevich/Re-filter-lists/releases/latest/download/ruleset-domain-refilter_domains.srs",
+        "url": "https://cdn.jsdelivr.net/gh/dsmnoi/ruleset@main/ProxyGFWlist.srs",
         "download_detour": "direct"
       },
       {
-        "tag": "refilter_ipsum",
+        "tag": "geosite-cn",
         "type": "remote",
         "format": "binary",
-        "url": "https://github.com/1andrevich/Re-filter-lists/releases/latest/download/ruleset-ip-refilter_ipsum.srs",
+        "url": "https://cdn.jsdelivr.net/gh/dsmnoi/ruleset@main/geosite-cn.srs",
         "download_detour": "direct"
       },
       {
@@ -127,11 +132,7 @@
         "action": "hijack-dns"
       },
       {
-        "rule_set": "refilter_domains",
-        "outbound": "selectorMain"
-      },
-      {
-        "rule_set": "refilter_ipsum",
+        "rule_set": "ProxyGFWlist",
         "outbound": "selectorMain"
       },
       {

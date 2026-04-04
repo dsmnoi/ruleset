@@ -13,7 +13,12 @@
         "server": "223.5.5.5"
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "rule_set": "geosite-cn",
+        "server": "dns_resolver"
+      }
+    ],
     "final": "dns_resolver",
     "strategy": "prefer_ipv4"
   },
@@ -84,6 +89,13 @@
         "type": "remote",
         "format": "binary",
         "url": "https://cdn.jsdelivr.net/gh/dsmnoi/ruleset@main/ProxyGFWlist.srs",
+        "download_detour": "direct"
+      },
+      {
+        "tag": "geosite-cn",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://cdn.jsdelivr.net/gh/dsmnoi/ruleset@main/geosite-cn.srs",
         "download_detour": "direct"
       },
       {
