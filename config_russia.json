@@ -1,0 +1,154 @@
+{
+  "dns": {
+    "servers": [
+      {
+        "tag": "dns_proxy",
+        "type": "https",
+        "server": "1.1.1.1",
+        "path": "/dns-query"
+      },
+      {
+        "tag": "dns_resolver",
+        "type": "udp",
+        "server": "77.88.8.8"
+      }
+    ],
+    "rules": [],
+    "final": "dns_resolver",
+    "strategy": "prefer_ipv4"
+  },
+  "inbounds": [
+    {
+      "type": "tun",
+      "tag": "tun-in",
+      "mtu": 1400,
+      "auto_route": true,
+      "strict_route": true,
+      "stack": "system",
+      "sniff": true,
+      "address": [
+        "172.16.0.1/30",
+        "fd00::1/126"
+      ]
+    }
+  ],
+  "outbounds": [
+    {
+      "tag": "selectorMain",
+      "type": "selector",
+      "outbounds": [
+        "auto",
+        "direct"
+      ],
+      "default": "auto"
+    },
+    {
+      "tag": "selectorOther",
+      "type": "selector",
+      "outbounds": [
+        "auto",
+        "direct",
+        "selectorMain"
+      ],
+      "default": "auto"
+    },
+    {
+      "tag": "selectorAD",
+      "type": "selector",
+      "outbounds": [
+        "direct",
+        "block"
+      ],
+      "default": "direct"
+    },
+    {
+      "tag": "auto",
+      "type": "urltest",
+      "outbounds": [],
+      "url": "https://www.gstatic.com/generate_204"
+    },
+    {
+      "tag": "direct",
+      "type": "direct"
+    },
+    {
+      "tag": "block",
+      "type": "block"
+    }
+  ],
+  "route": {
+    "auto_detect_interface": false,
+    "rule_set": [
+      {
+        "tag": "refilter_domains",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://github.com/1andrevich/Re-filter-lists/releases/latest/download/ruleset-domain-refilter_domains.srs",
+        "download_detour": "direct"
+      },
+      {
+        "tag": "refilter_ipsum",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://github.com/1andrevich/Re-filter-lists/releases/latest/download/ruleset-ip-refilter_ipsum.srs",
+        "download_detour": "direct"
+      },
+      {
+        "tag": "ads-block",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://cdn.jsdelivr.net/gh/dsmnoi/ruleset@main/geosite-category-ads-all.srs",
+        "download_detour": "direct"
+      },
+      {
+        "tag": "privacy-essentials",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://cdn.jsdelivr.net/gh/dsmnoi/ruleset@main/privacy_essentials.srs",
+        "download_detour": "direct"
+      }
+    ],
+    "rules": [
+      {
+        "action": "sniff"
+      },
+      {
+        "type": "logical",
+        "mode": "or",
+        "rules": [
+          {
+            "network": "udp",
+            "port": 53
+          },
+          {
+            "protocol": "dns"
+          }
+        ],
+        "action": "hijack-dns"
+      },
+      {
+        "rule_set": "refilter_domains",
+        "outbound": "selectorMain"
+      },
+      {
+        "rule_set": "refilter_ipsum",
+        "outbound": "selectorMain"
+      },
+      {
+        "rule_set": "ads-block",
+        "outbound": "selectorAD"
+      },
+      {
+        "rule_set": "privacy-essentials",
+        "outbound": "selectorPrivacy"
+      }
+    ],
+    "final": "selectorOther",
+    "default_domain_resolver": "dns_resolver"
+  },
+  "experimental": {
+    "cache_file": {
+      "enabled": true
+    }
+  }
+}
