@@ -6,6 +6,7 @@
       {"tag": "dns_resolver", "address": "223.5.5.5", "detour": "direct"}
     ],
     "rules": [
+      {"outbound": "any", "server": "dns_resolver"},
       {"rule_set": "geosite-cn", "server": "dns_resolver"},
       {"query_type": ["A", "AAAA"], "server": "dns_fakeip"}
     ],
