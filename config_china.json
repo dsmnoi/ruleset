@@ -7,6 +7,10 @@
         "detour": "selectorMain"
       },
       {
+        "tag": "dns_fakeip",
+        "address": "fakeip"
+      },
+      {
         "tag": "dns_resolver",
         "address": "223.5.5.5",
         "detour": "direct"
@@ -16,10 +20,22 @@
       {
         "rule_set": "geosite-cn",
         "server": "dns_resolver"
+      },
+      {
+        "query_type": [
+          "A",
+          "AAAA"
+        ],
+        "server": "dns_fakeip"
       }
     ],
     "final": "dns_proxy",
-    "strategy": "prefer_ipv4"
+    "strategy": "prefer_ipv4",
+    "fakeip": {
+      "enabled": true,
+      "inet4_range": "198.18.0.0/15",
+      "inet6_range": "fc00::/18"
+    }
   },
   "inbounds": [
     {
@@ -30,7 +46,6 @@
       "strict_route": true,
       "stack": "mixed",
       "sniff": true,
-      "sniff_override_destination": true,
       "inet4_address": "172.16.0.1/30",
       "inet6_address": "fd00::1/126"
     }
@@ -250,7 +265,8 @@
   },
   "experimental": {
     "cache_file": {
-      "enabled": true
+      "enabled": true,
+      "store_fakeip": true
     }
   }
 }
