@@ -8,7 +8,7 @@
     "final": "dns_proxy",
     "strategy": "prefer_ipv4"
   },
-  "inbounds": [{"type": "tun", "tag": "tun-in", "mtu": 1400, "auto_route": true, "strict_route": true, "stack": "system", "sniff": true, "address": ["172.16.0.1/30", "fd00::1/126"]}],
+  "inbounds": [{"type": "tun", "tag": "tun-in", "mtu": 1400, "auto_route": true, "strict_route": true, "stack": "system", "sniff": true, "sniff_override_destination": true, "sniff_override_destination": true, "address": ["172.16.0.1/30", "fd00::1/126"]}],
   "outbounds": [
     {"tag": "selectorMain", "type": "selector", "outbounds": ["auto", "direct"], "default": "auto"},
     {"tag": "selectorOther", "type": "selector", "outbounds": ["auto", "direct", "selectorMain"], "default": "auto"},
