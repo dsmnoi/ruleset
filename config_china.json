@@ -1,14 +1,9 @@
 {
   "dns": {
     "servers": [
-      {"tag": "dns_proxy", "type": "https", "server": "1.1.1.1", "path": "/dns-query", "detour": "selectorMain"},
-      {"tag": "dns_resolver", "type": "udp", "server": "223.5.5.5"}
+      {"tag": "dns_local", "type": "udp", "server": "223.5.5.5"}
     ],
-    "rules": [
-      {"rule_set": "geosite-cn", "server": "dns_resolver"},
-      {"domain_suffix": [".cn", ".com.cn", ".net.cn"], "server": "dns_resolver"}
-    ],
-    "final": "dns_proxy",
+    "final": "dns_local",
     "strategy": "prefer_ipv4"
   },
   "inbounds": [{
@@ -34,7 +29,7 @@
   "route": {
     "auto_detect_interface": true,
     "final": "selectorMain",
-    "default_domain_resolver": "dns_resolver",
+    "default_domain_resolver": "dns_local",
     "rule_set": [
       {"type": "remote", "format": "binary", "download_detour": "direct", "tag": "geosite-google", "url": "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/google.srs"},
       {"type": "remote", "format": "binary", "download_detour": "direct", "tag": "geosite-youtube", "url": "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/youtube.srs"},
