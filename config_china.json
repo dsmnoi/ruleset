@@ -1,18 +1,17 @@
 {
   "dns": {
     "servers": [
-      {"tag": "dns_fakeip", "address": "fakeip"},
+      {"tag": "dns_proxy", "address": "https://1.1.1.1/dns-query", "detour": "selectorMain"},
       {"tag": "dns_local", "address": "223.5.5.5", "detour": "direct"}
     ],
     "rules": [
       {"rule_set": "geosite-cn", "server": "dns_local"},
-      {"query_type": ["A", "AAAA"], "server": "dns_fakeip"}
+      {"domain_suffix": [".cn", ".com.cn", ".net.cn", ".org.cn"], "server": "dns_local"}
     ],
-    "final": "dns_local",
-    "strategy": "prefer_ipv4",
-    "fakeip": {"enabled": true, "inet4_range": "198.18.0.0/15", "inet6_range": "fc00::/18"}
+    "final": "dns_proxy",
+    "strategy": "prefer_ipv4"
   },
-  "inbounds": [{"type": "tun", "tag": "tun-in", "mtu": 1400, "auto_route": true, "strict_route": true, "stack": "mixed", "sniff": true, "inet4_address": "172.16.0.1/30", "inet6_address": "fd00::1/126"}],
+  "inbounds": [{"type": "tun", "tag": "tun-in", "mtu": 1400, "auto_route": true, "strict_route": true, "stack": "mixed", "sniff": true, "sniff_override_destination": true, "inet4_address": "172.16.0.1/30", "inet6_address": "fd00::1/126"}],
   "outbounds": [
     {"tag": "selectorMain", "type": "selector", "outbounds": ["auto", "direct"], "default": "auto"},
     {"tag": "selectorOther", "type": "selector", "outbounds": ["auto", "direct", "selectorMain"], "default": "auto"},
@@ -56,8 +55,9 @@
       {"rule_set": "geoip-private", "outbound": "direct"},
       {"rule_set": "geosite-apple-cn", "outbound": "direct"},
       {"rule_set": "geoip-cn", "outbound": "direct"},
-      {"rule_set": "geosite-cn", "outbound": "direct"}
+      {"rule_set": "geosite-cn", "outbound": "direct"},
+      {"domain_suffix": [".cn", ".com.cn", ".net.cn", ".org.cn"], "outbound": "direct"}
     ]
   },
-  "experimental": {"cache_file": {"enabled": true, "store_fakeip": true}}
+  "experimental": {"cache_file": {"enabled": true}}
 }
