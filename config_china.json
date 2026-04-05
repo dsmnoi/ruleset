@@ -1,52 +1,19 @@
 {
   "dns": {
     "servers": [
-      {
-        "tag": "dns_proxy",
-        "address": "https://1.1.1.1/dns-query",
-        "detour": "selectorMain"
-      },
-      {
-        "tag": "dns_fakeip",
-        "address": "fakeip"
-      },
-      {
-        "tag": "dns_resolver",
-        "address": "223.5.5.5",
-        "detour": "direct"
-      }
+      {"tag": "dns_proxy", "address": "https://1.1.1.1/dns-query", "detour": "selectorMain"},
+      {"tag": "dns_fakeip", "address": "fakeip"},
+      {"tag": "dns_resolver", "address": "223.5.5.5", "detour": "direct"}
     ],
     "rules": [
-      {
-        "rule_set": "geosite-cn",
-        "server": "dns_resolver"
-      },
-      {
-        "query_type": ["A", "AAAA"],
-        "server": "dns_fakeip"
-      }
+      {"rule_set": "geosite-cn", "server": "dns_resolver"},
+      {"query_type": ["A", "AAAA"], "server": "dns_fakeip"}
     ],
     "final": "dns_proxy",
     "strategy": "prefer_ipv4",
-    "fakeip": {
-      "enabled": true,
-      "inet4_range": "198.18.0.0/15",
-      "inet6_range": "fc00::/18"
-    }
+    "fakeip": {"enabled": true, "inet4_range": "198.18.0.0/15", "inet6_range": "fc00::/18"}
   },
-  "inbounds": [
-    {
-      "type": "tun",
-      "tag": "tun-in",
-      "mtu": 1400,
-      "auto_route": true,
-      "strict_route": true,
-      "stack": "mixed",
-      "sniff": true,
-      "inet4_address": "172.16.0.1/30",
-      "inet6_address": "fd00::1/126"
-    }
-  ],
+  "inbounds": [{"type": "tun", "tag": "tun-in", "mtu": 1400, "auto_route": true, "strict_route": true, "stack": "mixed", "sniff": true, "inet4_address": "172.16.0.1/30", "inet6_address": "fd00::1/126"}],
   "outbounds": [
     {"tag": "selectorMain", "type": "selector", "outbounds": ["auto", "direct"], "default": "auto"},
     {"tag": "selectorOther", "type": "selector", "outbounds": ["auto", "direct", "selectorMain"], "default": "auto"},
@@ -92,10 +59,5 @@
       {"rule_set": "geosite-cn", "outbound": "direct"}
     ]
   },
-  "experimental": {
-    "cache_file": {
-      "enabled": true,
-      "store_fakeip": true
-    }
-  }
+  "experimental": {"cache_file": {"enabled": true, "store_fakeip": true}}
 }
