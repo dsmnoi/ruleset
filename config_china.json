@@ -1,9 +1,13 @@
 {
   "dns": {
     "servers": [
-      {"tag": "dns_local", "type": "udp", "server": "223.5.5.5"}
+      {"tag": "dns_proxy", "type": "https", "server": "1.1.1.1", "path": "/dns-query", "detour": "selectorMain"},
+      {"tag": "dns_resolver", "type": "udp", "server": "223.5.5.5"}
     ],
-    "final": "dns_local",
+    "rules": [
+      {"rule_set": "geosite-cn", "server": "dns_resolver"}
+    ],
+    "final": "dns_proxy",
     "strategy": "prefer_ipv4"
   },
   "inbounds": [{
@@ -12,7 +16,7 @@
     "mtu": 1400,
     "auto_route": true,
     "strict_route": true,
-    "stack": "mixed",
+    "stack": "system",
     "sniff": true,
     "sniff_override_destination": true,
     "address": ["172.16.0.1/30", "fd00::1/126"]
@@ -21,15 +25,14 @@
     {"tag": "selectorMain", "type": "selector", "outbounds": ["auto", "direct"], "default": "auto"},
     {"tag": "selectorOther", "type": "selector", "outbounds": ["auto", "direct", "selectorMain"], "default": "auto"},
     {"tag": "selectorAD", "type": "selector", "outbounds": ["direct", "block"], "default": "direct"},
-    {"tag": "selectorPrivacy", "type": "selector", "outbounds": ["direct", "block"], "default": "direct"},
     {"tag": "auto", "type": "urltest", "outbounds": [], "url": "https://www.gstatic.com/generate_204"},
     {"tag": "direct", "type": "direct"},
     {"tag": "block", "type": "block"}
   ],
   "route": {
-    "auto_detect_interface": true,
+    "auto_detect_interface": false,
     "final": "selectorMain",
-    "default_domain_resolver": "dns_local",
+    "default_domain_resolver": "dns_resolver",
     "rule_set": [
       {"type": "remote", "format": "binary", "download_detour": "direct", "tag": "geosite-google", "url": "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/google.srs"},
       {"type": "remote", "format": "binary", "download_detour": "direct", "tag": "geosite-youtube", "url": "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/youtube.srs"},
@@ -61,8 +64,7 @@
       {"rule_set": "geoip-private", "outbound": "direct"},
       {"rule_set": "geosite-apple-cn", "outbound": "direct"},
       {"rule_set": "geoip-cn", "outbound": "direct"},
-      {"rule_set": "geosite-cn", "outbound": "direct"},
-      {"domain_suffix": [".cn", ".com.cn", ".net.cn"], "outbound": "direct"}
+      {"rule_set": "geosite-cn", "outbound": "direct"}
     ]
   },
   "experimental": {"cache_file": {"enabled": true}}
