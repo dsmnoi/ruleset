@@ -189,7 +189,8 @@
     ],
     "rules": [
       {
-        "action": "sniff"
+        "action": "sniff",
+        "override_destination": true
       },
       {
         "type": "logical",
